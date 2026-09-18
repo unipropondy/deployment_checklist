@@ -1,0 +1,13 @@
+{
+  "name": "deployment-checklist-new",
+  "version": "1.0.0",
+  "description": "Brand New Deployment Checklist Application (React Native Expo + Express MSSQL)",
+  "scripts": {
+    "start": "concurrently \"npm run dev --prefix backend\" \"npm run start --prefix frontend\"",
+    "start:backend": "npm run dev --prefix backend",
+    "start:frontend": "npm run start --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
