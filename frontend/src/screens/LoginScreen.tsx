@@ -36,6 +36,7 @@ export const LoginScreen: React.FC = () => {
     try {
       await login({ Username: username, Password: password });
     } catch (err: any) {
+      console.error('[LoginScreen] Login error:', err);
       setError(err.message || 'Invalid credentials. Please try again.');
     } finally {
       setLoading(false);

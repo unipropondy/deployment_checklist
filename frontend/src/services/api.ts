@@ -2,12 +2,33 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-// For Android emulator, fallback to 10.0.2.2 if localhost is specified
-let baseURL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api';
+declare const __DEV__: boolean;
 
-if (Platform.OS === 'android' && baseURL.includes('localhost')) {
-  baseURL = baseURL.replace('localhost', '10.0.2.2');
-}
+const RAILWAY_API_URL = 'https://deploymentchecklist-production.up.railway.app/api';
+
+const getBaseURL = (): string => {
+  const envApiUrl = (process.env as Record<string, string | undefined>).EXPO_PUBLIC_API_URL;
+  if (envApiUrl) {
+    return envApiUrl;
+  }
+
+  // Check if running on web browser
+  if (Platform.OS === 'web' && typeof window !== 'undefined' && window.location) {
+    const hostname = window.location.hostname;
+    // If testing on local browser, use local backend
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:5000/api';
+    }
+    // Remote / Production web deployment
+    return RAILWAY_API_URL;
+  }
+
+  // Native / Android / iOS: Default to Railway HTTPS backend so Expo Go on physical phones & emulators connect cleanly
+  return RAILWAY_API_URL;
+};
+
+let baseURL = getBaseURL();
+console.log('[API] Initialized with baseURL:', baseURL);
 
 const api = axios.create({
   baseURL,
