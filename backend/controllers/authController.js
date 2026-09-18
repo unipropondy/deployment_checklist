@@ -5,8 +5,10 @@ const jwt = require('jsonwebtoken');
 const login = async (req, res, next) => {
   try {
     const { Username, name, Password, password } = req.body;
-    const loginUser = Username || name;
-    const loginPass = Password || password;
+    const rawUser = Username || name || '';
+    const rawPass = Password || password || '';
+    const loginUser = rawUser.trim();
+    const loginPass = rawPass.trim();
 
     if (!loginUser || !loginPass) {
       return res.status(400).json({
