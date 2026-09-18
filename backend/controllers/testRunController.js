@@ -180,8 +180,9 @@ const createTestRun = async (req, res, next) => {
       });
     }
 
-    // CheckedBy comes from authenticated JWT user
-    const checkedBy = req.user ? req.user.Name : 'System User';
+    // CheckedBy column in TestRuns table is INT (storing UserId)
+    const checkedById = (req.user && req.user.UserId) ? parseInt(req.user.UserId, 10) : 1;
+    const checkedByName = req.user ? req.user.Name : 'Admin User';
 
     const checkId = await generateCheckId();
     const checkDateVal = CheckDate ? new Date(CheckDate) : new Date();
@@ -192,7 +193,7 @@ const createTestRun = async (req, res, next) => {
       .input('CheckId', sql.VarChar, checkId)
       .input('ShopId', sql.Int, ShopId)
       .input('BuildId', sql.Int, BuildId)
-      .input('CheckedBy', sql.VarChar, checkedBy)
+      .input('CheckedBy', sql.Int, checkedById)
       .input('CheckDate', sql.DateTime, checkDateVal)
       .input('Status', sql.VarChar, 'In Progress')
       .query(`
@@ -231,7 +232,7 @@ const createTestRun = async (req, res, next) => {
         CheckId: checkId,
         ShopId,
         BuildId,
-        CheckedBy: checkedBy,
+        CheckedBy: checkedByName,
         CheckDate: checkDateVal,
         Status: 'In Progress',
         TotalItems: masterItems.length
